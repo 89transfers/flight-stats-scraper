@@ -22,7 +22,8 @@ export const CONFIG = {
   },
   RESPONSE_HEADERS: {
     'content-type': 'application/json;charset=UTF-8',
-    'access-control-allow-origin': '*',
+    'access-control-allow-origin': 'https://89transfers.com',
+    'vary': 'Origin',
   },
   CACHE: {
     ALL_FLIGHTS_KEY: 'all_flights_data',

@@ -176,14 +176,22 @@ export async function getFlights(
     const matches = flight.origin_iata === origin &&
       flight.destination_iata === destination &&
       flight.departure_date === date;
-    
+
     if (matches) {
       console.log(`Found matching flight: ${flight.flight}`);
     }
-    
+
     return matches;
   });
 
-  console.log(`Found ${matchingFlights.length} matching flights`);
-  return matchingFlights;
+  // Deduplicate by flight_id
+  const seen = new Set<string>();
+  const uniqueFlights = matchingFlights.filter(f => {
+    if (seen.has(f.flight_id)) return false;
+    seen.add(f.flight_id);
+    return true;
+  });
+
+  console.log(`Found ${uniqueFlights.length} matching flights (${matchingFlights.length - uniqueFlights.length} duplicates removed)`);
+  return uniqueFlights;
 }

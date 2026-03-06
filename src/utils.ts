@@ -97,7 +97,8 @@ export function createJsonResponse(data: any, status: number = 200, headers: Rec
     status,
     headers: {
       'content-type': 'application/json;charset=UTF-8',
-      'access-control-allow-origin': '*',
+      'access-control-allow-origin': 'https://89transfers.com',
+      'vary': 'Origin',
       ...headers,
     },
   });

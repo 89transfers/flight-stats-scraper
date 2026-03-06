@@ -18,9 +18,10 @@ export default {
       if (request.method === 'OPTIONS') {
         return new Response(null, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': 'https://89transfers.com',
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
+            'Vary': 'Origin',
           },
         });
       }
@@ -54,6 +55,10 @@ export default {
         try {
           const requestDate = new Date(date);
           if (isNaN(requestDate.getTime())) {
+            throw new Error('Invalid date');
+          }
+          // Validate the date didn't silently roll over (e.g., Feb 30 -> Mar 2)
+          if (formatDate(requestDate) !== date) {
             throw new Error('Invalid date');
           }
 
