@@ -11,16 +11,6 @@ id = "f4815bc3b821487da2b09b8a67067e7c"
 [triggers]
 crons = ["0 */3 * * *"]
 
-[vars]
-# Add your custom variables here
-
-[env.production]
-# Production-specific settings
-
-[env.staging]
-# Staging-specific settings
-
-# Enable source maps for debugging
 [build]
 command = "npm run build"
 watch_dir = "src"
