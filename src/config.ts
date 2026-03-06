@@ -20,11 +20,6 @@ export const CONFIG = {
     'Sec-Fetch-User': '?1',
     'Upgrade-Insecure-Requests': '1',
   },
-  RESPONSE_HEADERS: {
-    'content-type': 'application/json;charset=UTF-8',
-    'access-control-allow-origin': 'https://89transfers.com',
-    'vary': 'Origin',
-  },
   CACHE: {
     ALL_FLIGHTS_KEY: 'all_flights_data',
     EXPIRATION: 60 * 60 * 3, // 3 hours in seconds

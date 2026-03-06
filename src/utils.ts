@@ -89,17 +89,29 @@ export function extractJsonFromHtml(html: string, startMarker: string, endMarker
   return JSON.parse(jsonText);
 }
 
+const ALLOWED_ORIGINS = [
+  'https://89transfers.com',
+  'https://www.89transfers.com',
+];
+
+export function getCorsOrigin(request?: Request): string {
+  const origin = request?.headers.get('Origin') || '';
+  if (ALLOWED_ORIGINS.includes(origin) || origin.endsWith('.v3-team-2025.pages.dev')) {
+    return origin;
+  }
+  return ALLOWED_ORIGINS[0];
+}
+
 /**
  * Creates a JSON response with appropriate headers
  */
-export function createJsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
+export function createJsonResponse(data: any, status: number = 200, request?: Request): Response {
   return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: {
       'content-type': 'application/json;charset=UTF-8',
-      'access-control-allow-origin': 'https://89transfers.com',
+      'access-control-allow-origin': getCorsOrigin(request),
       'vary': 'Origin',
-      ...headers,
     },
   });
 }

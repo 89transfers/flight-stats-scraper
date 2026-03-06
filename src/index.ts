@@ -1,7 +1,7 @@
 import { CONFIG } from './config';
 import { getFlights, refreshAllFlightData } from './service';
 import { ApiResponse, ErrorResponse, Env } from './types';
-import { createJsonResponse, formatDate } from './utils';
+import { createJsonResponse, formatDate, getCorsOrigin } from './utils';
 
 /**
  * Main worker entry point
@@ -18,7 +18,7 @@ export default {
       if (request.method === 'OPTIONS') {
         return new Response(null, {
           headers: {
-            'Access-Control-Allow-Origin': 'https://89transfers.com',
+            'Access-Control-Allow-Origin': getCorsOrigin(request),
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
             'Vary': 'Origin',
@@ -30,7 +30,8 @@ export default {
       if (request.method !== 'GET') {
         return createJsonResponse(
           { error: 'Method not allowed' } as ErrorResponse,
-          405
+          405,
+          request
         );
       }
 
@@ -47,7 +48,8 @@ export default {
         if (!origin || !destination || !date) {
           return createJsonResponse(
             { error: 'Missing required parameters: origin, destination, date' } as ErrorResponse,
-            400
+            400,
+            request
           );
         }
 
@@ -71,10 +73,11 @@ export default {
           
           if (requestDate < today || requestDate > maxDate) {
             return createJsonResponse(
-              { 
-                error: `Date must be between ${formatDate(today)} and ${formatDate(maxDate)}` 
+              {
+                error: `Date must be between ${formatDate(today)} and ${formatDate(maxDate)}`
               } as ErrorResponse,
-              400
+              400,
+              request
             );
           }
 
@@ -88,23 +91,25 @@ export default {
           return createJsonResponse({
             totalFlights: flights.length,
             flights
-          } as ApiResponse);
+          } as ApiResponse, 200, request);
         } catch (error) {
           return createJsonResponse(
             { error: 'Invalid date format. Use YYYY-MM-DD' } as ErrorResponse,
-            400
+            400,
+            request
           );
         }
 
       } else if (path === CONFIG.ENDPOINTS.REFRESH) {
         // Manual trigger for refreshing flight data
         await refreshAllFlightData(env);
-        return createJsonResponse({ message: 'Flight data refreshed successfully' });
+        return createJsonResponse({ message: 'Flight data refreshed successfully' }, 200, request);
 
       } else {
         return createJsonResponse(
           { error: 'Not Found' } as ErrorResponse,
-          404
+          404,
+          request
         );
       }
 
@@ -114,7 +119,8 @@ export default {
       
       return createJsonResponse(
         { error: errorMessage } as ErrorResponse,
-        500
+        500,
+        request
       );
     }
   },
